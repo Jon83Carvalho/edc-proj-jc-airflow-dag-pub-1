@@ -99,7 +99,7 @@ def pipeline_precos():
             ],
 
             Steps=[{
-                'Name': 'Primeiro processamento do ENEM',
+                'Name': 'Primeiro processamento dos dados de precos',
                 'ActionOnFailure': 'TERMINATE_CLUSTER',
                 'HadoopJarStep': {
                     'Jar': 'command-runner.jar',
