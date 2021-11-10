@@ -25,13 +25,13 @@ default_args = {
 }
 
 @dag(default_args=default_args, schedule_interval=None, catchup=False, tags=["emr", "aws", "precos"], description="Pipeline para processamento de preços de alimentos no mundo.")
-def pipeline_enem():
+def pipeline_precos():
     """
     Pipeline para processamento de de preços de alimentos
     """
 
     @task
-    def emr_process_enem_data():
+    def emr_process_precos_data():
         cluster_id = client.run_job_flow(
             Name='EMR-Jon-IGTI',
             ServiceRole='EMR_DefaultRole',
