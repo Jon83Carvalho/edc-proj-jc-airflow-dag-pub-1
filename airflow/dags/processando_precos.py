@@ -146,9 +146,9 @@ def pipeline_precos():
 
 
     # Encadeando a pipeline
-    cluid = emr_process_enem_data()
+    cluid = emr_process_precos_data()
     res_emr = wait_emr_step(cluid)
     res_ter = terminate_emr_cluster(res_emr, cluid)
 
 
-execucao = pipeline_enem()
+execucao = pipeline_precos()
