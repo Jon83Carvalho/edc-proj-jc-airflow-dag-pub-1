@@ -62,7 +62,7 @@ def pipeline_precos():
                 'Ec2SubnetId': 'subnet-3125ac5a'
             },
 
-            Applications=[{'Name': 'Spark'}],
+            Applications=[{'Name': 'Spark'},{'Name':'JupyterHub'}],
 
             Configurations=[{
                 "Classification": "spark-env",
