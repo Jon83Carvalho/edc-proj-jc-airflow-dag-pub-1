@@ -202,6 +202,23 @@ def pipeline_precos():
         )
         return cluster_id["JobFlowId"]
 
+    @task
+    def wait_emr_step(cid: str):
+        waiter = client.get_waiter('step_complete')
+        steps = client.list_steps(
+            ClusterId=cid
+        )
+        stepId = steps['Steps'][0]['Id']
+
+        waiter.wait(
+            ClusterId=cid,
+            StepId=stepId,
+            WaiterConfig={
+                'Delay': 30,
+                'MaxAttempts': 120
+            }
+        )
+        return True
 
     @task
     def etl_cambio(cid: str, success_before: bool):
@@ -226,23 +243,7 @@ def pipeline_precos():
             )
             return newstep['StepIds'][0]
 
-    @task
-    def wait_emr_step(cid: str):
-        waiter = client.get_waiter('step_complete')
-        steps = client.list_steps(
-            ClusterId=cid
-        )
-        stepId = steps['Steps'][0]['Id']
 
-        waiter.wait(
-            ClusterId=cid,
-            StepId=stepId,
-            WaiterConfig={
-                'Delay': 30,
-                'MaxAttempts': 120
-            }
-        )
-        return True
 
     @task
     def wait_etl_cambio(cid: str, stepId: str):
