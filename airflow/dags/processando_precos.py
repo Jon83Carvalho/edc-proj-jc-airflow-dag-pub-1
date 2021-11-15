@@ -210,7 +210,7 @@ def pipeline_precos():
             JobFlowId=cid,
             Steps=[{
                 'Name': 'Etl e insert cambio',
-                'ActionOnFailure': "TERMINATE_CLUSTER",
+                'ActionOnFailure': "CANCEL_AND_WAIT",
                 'HadoopJarStep': {
                     'Jar': 'command-runner.jar',
                     'Args': ['spark-submit',
