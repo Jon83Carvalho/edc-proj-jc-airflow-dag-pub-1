@@ -204,27 +204,27 @@ def pipeline_precos():
 
 
     @task
-    def etl_cambio(cid: str, success_before: bool):
-        if success_before:
-            newstep = client.add_job_flow_steps(
-                JobFlowId=cid,
-                Steps=[{
-                    'Name': 'Etl e insert cambio',
-                    'ActionOnFailure': "TERMINATE_CLUSTER",
-                    'HadoopJarStep': {
-                        'Jar': 'command-runner.jar',
-                        'Args': ['spark-submit',
-                                '--packages', 'io.delta:delta-core_2.12:1.0.0', 
-                                '--conf', 'spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension', 
-                                '--conf', 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog', 
-                                '--master', 'yarn',
-                                '--deploy-mode', 'cluster',
-                                's3://datalake-igti-projeto-edc/script/02_delta_spark_etl_insert.py'
-                            ]
-                    }
-                }]
-            )
-            return newstep['StepIds'][0]
+    def etl_cambio():
+        
+        newstep = client.add_job_flow_steps(
+            JobFlowId=cid,
+            Steps=[{
+                'Name': 'Etl e insert cambio',
+                'ActionOnFailure': "TERMINATE_CLUSTER",
+                'HadoopJarStep': {
+                    'Jar': 'command-runner.jar',
+                    'Args': ['spark-submit',
+                            '--packages', 'io.delta:delta-core_2.12:1.0.0', 
+                            '--conf', 'spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension', 
+                            '--conf', 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog', 
+                            '--master', 'yarn',
+                            '--deploy-mode', 'cluster',
+                            's3://datalake-igti-projeto-edc/script/02_delta_spark_etl_insert.py'
+                        ]
+                }
+            }]
+        )
+        return newstep['StepIds'][0]
 
     @task
     def wait_emr_step(cid: str):
