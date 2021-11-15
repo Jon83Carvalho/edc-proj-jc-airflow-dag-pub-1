@@ -204,7 +204,7 @@ def pipeline_precos():
 
 
     @task
-    def etl_cambio():
+    def etl_cambio(cid: str, success_before: bool):
         
         newstep = client.add_job_flow_steps(
             JobFlowId=cid,
@@ -256,8 +256,8 @@ def pipeline_precos():
 
     # Encadeando a pipeline
     cluid = emr_process_precos_data()
-    cluid1 = etl_cambio()
     res_emr = wait_emr_step(cluid)
+    cluid1 = etl_cambio(cluid,res_emr)
     res_emr1 = wait_emr_step(cluid1)
     #es_ter = terminate_emr_cluster(res_emr, cluid)
 
