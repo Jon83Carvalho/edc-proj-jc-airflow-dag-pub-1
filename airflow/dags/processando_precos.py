@@ -244,7 +244,19 @@ def pipeline_precos():
         )
         return True
 
+    @task
+    def wait_etl_cambio(cid: str, stepId: str):
+        waiter = client.get_waiter('step_complete')
 
+        waiter.wait(
+            ClusterId=cid,
+            StepId=stepId,
+            WaiterConfig={
+                'Delay': 30,
+                'MaxAttempts': 120
+            }
+        )
+        return True
 
     @task
     def terminate_emr_cluster(success_before: str, cid: str):
@@ -258,7 +270,7 @@ def pipeline_precos():
     cluid = emr_process_precos_data()
     res_emr = wait_emr_step(cluid)
     cluid1 = etl_cambio(cluid,res_emr)
-    res_emr1 = wait_emr_step(cluid1)
+    res_emr1 = wait_etl_cambio(cluid,cluid1)
     #es_ter = terminate_emr_cluster(res_emr, cluid)
 
 
