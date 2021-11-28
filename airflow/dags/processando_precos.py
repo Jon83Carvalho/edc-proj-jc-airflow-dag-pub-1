@@ -174,6 +174,46 @@ def pipeline_precos():
         )
         return True
 
+######etl para tabela final
+    @task
+    def etl_tabela_final(cid: str, success_before: bool):
+        if success_before:
+            newstep = client.add_job_flow_steps(
+                JobFlowId=cid,
+                Steps=[{
+                    'Name': 'Etl para tabela final',
+                    'ActionOnFailure': "CANCEL_AND_WAIT",
+                    'HadoopJarStep': {
+                        'Jar': 'command-runner.jar',
+                        'Args': ['spark-submit',
+                                '--packages', 'io.delta:delta-core_2.12:1.0.0', 
+                                '--conf', 'spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension', 
+                                '--conf', 'spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog', 
+                                '--master', 'yarn',
+                                '--deploy-mode', 'cluster',
+                                's3://datalake-igti-projeto-edc/script/03_load_final_table.py'
+                            ]
+                    }
+                }]
+            )
+            return newstep['StepIds'][0]
+
+
+
+    @task
+    def wait_etl_tabela_final(cid: str, stepId: str):
+        waiter = client.get_waiter('step_complete')
+
+        waiter.wait(
+            ClusterId=cid,
+            StepId=stepId,
+            WaiterConfig={
+                'Delay': 30,
+                'MaxAttempts': 120
+            }
+        )
+        return True
+
     @task
     def terminate_emr_cluster(success_before: str, cid: str):
         if success_before:
@@ -187,6 +227,8 @@ def pipeline_precos():
     res_emr = wait_emr_step(cluid)
     cluid1 = etl_cambio(cluid,res_emr)
     res_emr1 = wait_etl_cambio(cluid,cluid1)
+    cluid2 = etl_tabela_final(cluid,res_emr1)
+    res_emr2 = wait_etl_tabela_final(cluid,cluid2)
     #es_ter = terminate_emr_cluster(res_emr, cluid)
 
 
