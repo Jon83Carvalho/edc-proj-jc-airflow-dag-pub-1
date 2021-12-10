@@ -43,14 +43,14 @@ def pipeline_precos():
                 'InstanceGroups': [
                     {
                         'Name': 'Master nodes',
-                        'Market': 'SPOT',
+                        'Market': 'ON_DEMAND',
                         'InstanceRole': 'MASTER',
                         'InstanceType': 'm5.xlarge',
                         'InstanceCount': 1,
                     },
                     {
                         'Name': 'Worker nodes',
-                        'Market': 'SPOT',
+                        'Market': 'ON_DEMAND',
                         'InstanceRole': 'CORE',
                         'InstanceType': 'm5.xlarge',
                         'InstanceCount': 1,
